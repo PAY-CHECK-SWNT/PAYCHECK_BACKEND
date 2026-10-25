@@ -18,6 +18,7 @@ import com.paycheck.ciclo.CicloRepository;
 import com.paycheck.common.ClockConfig;
 import java.time.Clock;
 import java.time.LocalDate;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -94,7 +95,7 @@ class MovimientoControllerTest {
                 .andExpect(jsonPath("$.origen").value("MANUAL"))
                 .andExpect(jsonPath("$.creadoEn").value(matchesPattern("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}-05:00")));
 
-        assertThat(movimientos.findAll()).singleElement().satisfies(m -> {
+        assertThat(movimientosDelCiclo()).singleElement().satisfies(m -> {
             assertThat(m.getCiclo().getId()).isEqualTo(ciclo.getId());
             assertThat(m.getUsuario().getId()).isEqualTo(usuario.getId());
             assertThat(m.getOrigen()).isEqualTo(OrigenMovimiento.MANUAL);
@@ -142,7 +143,7 @@ class MovimientoControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.descripcion").value(nullValue()));
 
-        assertThat(movimientos.findAll()).singleElement()
+        assertThat(movimientosDelCiclo()).singleElement()
                 .satisfies(m -> assertThat(m.getDescripcion()).isNull());
     }
 
@@ -162,7 +163,7 @@ class MovimientoControllerTest {
                         {"codigo":"VALIDACION","mensaje":"Revisa los datos del formulario.",
                          "campos":{"descripcion":"Máximo 140 caracteres."}}
                         """, true));
-        assertThat(movimientos.findAll()).isEmpty();
+        assertThat(movimientosDelCiclo()).isEmpty();
     }
 
     @ParameterizedTest
@@ -174,7 +175,7 @@ class MovimientoControllerTest {
                         {"codigo":"VALIDACION","mensaje":"Revisa los datos del formulario.",
                          "campos":{"monto":"Debe ser mayor que 0."}}
                         """, true));
-        assertThat(movimientos.findAll()).isEmpty();
+        assertThat(movimientosDelCiclo()).isEmpty();
     }
 
     @Test
@@ -200,7 +201,7 @@ class MovimientoControllerTest {
                 .andExpect(content().json("""
                         {"codigo":"VALIDACION","mensaje":"Revisa los datos del formulario."}
                         """, true));
-        assertThat(movimientos.findAll()).isEmpty();
+        assertThat(movimientosDelCiclo()).isEmpty();
     }
 
     @ParameterizedTest
@@ -215,7 +216,7 @@ class MovimientoControllerTest {
                         {"codigo":"VALIDACION","mensaje":"Revisa los datos del formulario.",
                          "campos":{"categoria":"No corresponde al tipo de movimiento."}}
                         """, true));
-        assertThat(movimientos.findAll()).isEmpty();
+        assertThat(movimientosDelCiclo()).isEmpty();
     }
 
     @Test
@@ -226,7 +227,7 @@ class MovimientoControllerTest {
                         {"codigo":"VALIDACION","mensaje":"Revisa los datos del formulario.",
                          "campos":{"fecha":"No puede ser futura."}}
                         """, true));
-        assertThat(movimientos.findAll()).isEmpty();
+        assertThat(movimientosDelCiclo()).isEmpty();
     }
 
     @Test
@@ -237,7 +238,7 @@ class MovimientoControllerTest {
                         {"codigo":"VALIDACION","mensaje":"Revisa los datos del formulario.",
                          "campos":{"fecha":"No puede ser anterior al inicio de tu ciclo."}}
                         """, true));
-        assertThat(movimientos.findAll()).isEmpty();
+        assertThat(movimientosDelCiclo()).isEmpty();
     }
 
     @Test
@@ -250,7 +251,7 @@ class MovimientoControllerTest {
                 .andExpect(content().json("""
                         {"codigo":"SIN_CICLO_ACTIVO","mensaje":"Primero configura tu ciclo."}
                         """, true));
-        assertThat(movimientos.findAll()).isEmpty();
+        assertThat(movimientosDelCiclo()).isEmpty();
     }
 
     @Test
@@ -322,5 +323,10 @@ class MovimientoControllerTest {
 
     private ResultActions crear(String cuerpo) throws Exception {
         return mvc.perform(post("/api/movimientos").contentType(MediaType.APPLICATION_JSON).content(cuerpo));
+    }
+
+    /** Solo los del ciclo de la prueba: la base de docker compose puede tener datos del usuario demo. */
+    private List<Movimiento> movimientosDelCiclo() {
+        return movimientos.findByCicloIdOrderByFechaDescCreadoEnDesc(ciclo.getId());
     }
 }
