@@ -56,6 +56,10 @@ Las alertas se devuelven en el orden de esta tabla de arriba hacia abajo: `CICLO
   Una fecha concreta deja `fechaEstimada = false`.
 - En el PATCH, "hoy" es el día de la petición, no `fechaInicio` del ciclo.
 
+## Fecha y descripción de un movimiento (decidido en PC-11)
+- Válida si `fechaInicio ≤ fecha ≤ hoy`; sin fecha → hoy. Así todo movimiento del ciclo cae dentro del ciclo.
+- La descripción se recorta (trim); el máximo de 140 caracteres se mide después. Vacía o solo espacios → `null`.
+
 Propiedad que deben cumplir las pruebas: pagar un compromiso baja `disponible` y `comprometido`
 en el mismo monto y **no cambia `libre`**.
 

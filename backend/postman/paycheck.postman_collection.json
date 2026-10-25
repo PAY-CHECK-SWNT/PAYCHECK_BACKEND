@@ -1,0 +1,547 @@
+{
+  "info": {
+    "name": "Pay&Check",
+    "description": "Ejemplos de la API v1 (docs/api.md). Arranca el backend con ./mvnw spring-boot:run. Las fechas válidas de ciclo dependen de hoy: posterior a hoy y máximo hoy + 62 días.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Ciclos",
+      "item": [
+        {
+          "name": "Crear ciclo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/ciclos",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "ciclos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"saldoInicial\": 600000, \"fechaProximoIngreso\": \"2026-11-03\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Crear ciclo sin saber la fecha",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/ciclos",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "ciclos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"saldoInicial\": 600000, \"fechaProximoIngreso\": null }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "\"No sé\" → hoy + 30, fechaEstimada: true."
+          }
+        },
+        {
+          "name": "Error 400: saldo negativo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/ciclos",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "ciclos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"saldoInicial\": -1, \"fechaProximoIngreso\": \"2026-11-03\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Error 400: fecha que no es posterior a hoy",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/ciclos",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "ciclos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"saldoInicial\": 600000, \"fechaProximoIngreso\": \"2026-01-01\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Error 400: fecha a más de 62 días",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/ciclos",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "ciclos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"saldoInicial\": 600000, \"fechaProximoIngreso\": \"2027-06-01\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Error 409: ya hay un ciclo activo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/ciclos",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "ciclos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"saldoInicial\": 600000, \"fechaProximoIngreso\": \"2026-11-03\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Repetir cuando ya hay un ciclo activo."
+          }
+        },
+        {
+          "name": "Ciclo activo",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base}}/ciclos/activo",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "ciclos",
+                "activo"
+              ]
+            },
+            "description": "404 si no hay ciclo activo."
+          }
+        },
+        {
+          "name": "Cambiar la fecha del próximo ingreso",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/ciclos/activo",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "ciclos",
+                "activo"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"fechaProximoIngreso\": \"2026-11-05\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Cambiar a \"No sé\"",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/ciclos/activo",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "ciclos",
+                "activo"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"fechaProximoIngreso\": null }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "hoy + 30, fechaEstimada: true."
+          }
+        }
+      ]
+    },
+    {
+      "name": "Movimientos",
+      "item": [
+        {
+          "name": "Error 409: sin ciclo activo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/movimientos",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "movimientos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"tipo\": \"GASTO\", \"monto\": 15000, \"categoria\": \"COMIDA\", \"descripcion\": \"Almuerzo\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Correr antes de crear un ciclo (base de datos vacía). GET /movimientos también responde 409."
+          }
+        },
+        {
+          "name": "Registrar gasto",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/movimientos",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "movimientos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"tipo\": \"GASTO\", \"monto\": 15000, \"categoria\": \"COMIDA\", \"descripcion\": \"Almuerzo\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "description": "Sin fecha → hoy. Requiere un ciclo activo."
+          }
+        },
+        {
+          "name": "Listar movimientos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base}}/movimientos",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "movimientos"
+              ]
+            },
+            "description": "Del más reciente al más antiguo (fecha y luego creadoEn)."
+          }
+        },
+        {
+          "name": "Error 400: monto en 0",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/movimientos",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "movimientos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"tipo\": \"GASTO\", \"monto\": 0, \"categoria\": \"COMIDA\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Error 400: falta el tipo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/movimientos",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "movimientos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"monto\": 15000, \"categoria\": \"COMIDA\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Error 400: categoría de otro tipo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/movimientos",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "movimientos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"tipo\": \"GASTO\", \"monto\": 15000, \"categoria\": \"MESADA\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Error 400: fecha futura",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/movimientos",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "movimientos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"tipo\": \"GASTO\", \"monto\": 15000, \"categoria\": \"COMIDA\", \"fecha\": \"2099-01-01\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Error 400: fecha anterior al inicio del ciclo",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/movimientos",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "movimientos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"tipo\": \"GASTO\", \"monto\": 15000, \"categoria\": \"COMIDA\", \"fecha\": \"2020-01-01\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Error 400: descripción de más de 140 caracteres",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{base}}/movimientos",
+              "host": [
+                "{{base}}"
+              ],
+              "path": [
+                "movimientos"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"tipo\": \"GASTO\", \"monto\": 15000, \"categoria\": \"COMIDA\", \"descripcion\": \"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "base",
+      "value": "http://localhost:8080/api"
+    }
+  ]
+}

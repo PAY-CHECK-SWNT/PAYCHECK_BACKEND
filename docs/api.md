@@ -93,10 +93,31 @@ Mismas validaciones y mensajes de fecha que en POST, incluido `null` (o sin el c
   "descripcion": "Almuerzo"
 }
 ```
-- `monto > 0`. `fecha` opcional (por defecto hoy), no puede ser futura. `descripcion` opcional, máximo 140 caracteres.
+- `monto > 0`. `fecha` opcional (por defecto hoy), no puede ser futura ni anterior a `fechaInicio` del ciclo activo.
+  `descripcion` opcional, máximo 140 caracteres; se recorta y vacía queda `null`.
+- La categoría debe corresponder al tipo.
 - Se asigna al ciclo activo con `origen: "MANUAL"`.
 
 `201` → Movimiento · `400 VALIDACION` · `409 SIN_CICLO_ACTIVO`
+
+Mensajes de `campos` (decididos en PC-11):
+
+| Campo | Cuándo | Mensaje |
+|---|---|---|
+| `tipo`, `monto`, `categoria` | Falta o es null | Es obligatorio. |
+| `monto` | `≤ 0` | Debe ser mayor que 0. |
+| `categoria` | No corresponde al tipo | No corresponde al tipo de movimiento. |
+| `fecha` | `> hoy` | No puede ser futura. |
+| `fecha` | `< fechaInicio` del ciclo | No puede ser anterior al inicio de tu ciclo. |
+| `descripcion` | Más de 140 caracteres | Máximo 140 caracteres. |
+
+Un `tipo` o `categoria` que no existe responde `400 VALIDACION` sin `campos`, como un monto con decimales.
+Los datos se validan antes que el ciclo: un cuerpo inválido sin ciclo activo responde 400, no 409
+(excepto la regla de `fechaInicio`, que necesita el ciclo).
+
+`409 SIN_CICLO_ACTIVO` → "Primero configura tu ciclo." (también en GET /api/movimientos)
+
+`creadoEn` se responde en segundos, con la zona de Bogotá.
 
 Movimiento:
 ```json
