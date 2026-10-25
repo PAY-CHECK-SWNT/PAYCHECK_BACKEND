@@ -39,6 +39,17 @@ Todas las cifras son pesos enteros. Las divisiones se redondean hacia abajo.
 | `CICLO_VENCIDO` | `H ≥ F`. En ese caso `diasRestantes = 0` y todos los cupos son 0 |
 | `DATOS_INSUFICIENTES` | `diasTranscurridos < 3` (informativa: "Aún no hay datos suficientes") |
 
+Las alertas se devuelven en el orden de esta tabla de arriba hacia abajo: `CICLO_VENCIDO`, `LIBRE_NEGATIVO`,
+`AGOTAMIENTO_ANTICIPADO`, `DATOS_INSUFICIENTES`.
+
+## Casos especiales (decididos en PC-19)
+- **fechaAgotamiento con libre ≤ 0**: si `libre < 0`, es `null` (solo sale `LIBRE_NEGATIVO`). Si `libre = 0` y
+  `ritmoDiario > 0`, es `H` y sale `AGOTAMIENTO_ANTICIPADO`.
+- **Ciclo vencido** (`H ≥ F`): `ritmoDiario` se calcula normal, `saldoProyectado = libre` (porque `diasRestantes = 0`)
+  y `fechaAgotamiento = null`.
+- **Hoy antes del inicio del ciclo** (`H < fechaInicio`): `diasTranscurridos ≤ 0` se trata como menor que 3:
+  `ritmoDiario`, `saldoProyectado` y `fechaAgotamiento` son `null` y sale `DATOS_INSUFICIENTES`.
+
 Propiedad que deben cumplir las pruebas: pagar un compromiso baja `disponible` y `comprometido`
 en el mismo monto y **no cambia `libre`**.
 

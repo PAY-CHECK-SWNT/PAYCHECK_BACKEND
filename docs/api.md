@@ -125,6 +125,15 @@ Cifras calculadas por `PlanCalculator` según `docs/reglas-plan.md` (ejemplo = C
 ```
 Cada alerta: `{ "codigo": "LIBRE_NEGATIVO", "mensaje": "Tus gastos fijos superan lo que tienes." }`
 
+Mensajes de cada código (en este orden dentro de `alertas`):
+
+| codigo | mensaje |
+|---|---|
+| `CICLO_VENCIDO` | Ya pasó la fecha de tu próximo ingreso. Actualiza tu ciclo. |
+| `LIBRE_NEGATIVO` | Tus gastos fijos superan lo que tienes. |
+| `AGOTAMIENTO_ANTICIPADO` | A este ritmo el dinero se acaba antes de tu próximo ingreso. |
+| `DATOS_INSUFICIENTES` | Aún no hay datos suficientes para calcular tu ritmo de gasto. |
+
 `200` · `404 NO_ENCONTRADO` si no hay ciclo activo
 
 ## Sprint 2 (por definir)

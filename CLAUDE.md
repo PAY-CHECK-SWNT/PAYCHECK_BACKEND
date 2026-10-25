@@ -22,6 +22,8 @@ Proyecto académico, 3 sprints, entrega el 17 de noviembre de 2026.
 - Backend por funcionalidad: `com.paycheck.{ciclo, movimiento, compromiso, plan, resumen, auth, ia, common}`.
   Cada paquete: entidad, repositorio, servicio, controlador, DTOs.
 - `plan/PlanCalculator`: clase pura, sin Spring ni base de datos; recibe la fecha de hoy como parámetro.
+- `PlanCalculator` recibe records propios de `plan` (`DatosCiclo`, `MovimientoPlan`, `CompromisoPlan`), nunca entidades JPA;
+  el servicio que lo usa (PC-20) convierte las entidades a esos records. `ResumenPlan` ya tiene la forma de `GET /api/resumen`.
 - Web: `src/features/{ciclo, movimientos, panel}`, cliente HTTP en `src/api/`.
   Si `VITE_USE_MOCKS=true`, el cliente devuelve datos simulados con la forma exacta de `docs/api.md`.
 
@@ -42,6 +44,7 @@ Proyecto académico, 3 sprints, entrega el 17 de noviembre de 2026.
 ## Reglas para Claude
 - El contrato es `docs/api.md`. No cambies endpoints ni JSON sin preguntarme primero.
 - Las fórmulas están en `docs/reglas-plan.md`. Si algo es ambiguo, pregunta; no inventes reglas.
+- Cuando resuelvas una regla ambigua con el usuario, anota la decisión en `docs/reglas-plan.md` (y los mensajes en `docs/api.md`), no solo en el código.
 - Trabaja solo en la carpeta de la tarea (`backend/` o `web/`).
 - No agregues dependencias nuevas sin preguntarme.
 - Toda lógica de cálculo lleva pruebas. Al terminar una tarea, corre las pruebas y muestra el resultado.
