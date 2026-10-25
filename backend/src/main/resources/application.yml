@@ -1,0 +1,33 @@
+# Toda la configuración llega por variables de entorno.
+# En local se leen también desde backend/.env (el mismo archivo que usa docker compose).
+spring:
+  application:
+    name: paycheck
+  config:
+    import: optional:file:.env[.properties]
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: America/Bogota
+  flyway:
+    locations: classpath:db/migration
+  jackson:
+    time-zone: America/Bogota
+    serialization:
+      write-dates-as-timestamps: false
+
+server:
+  port: ${PORT:8080}
+
+app:
+  cors:
+    # Orígenes adicionales separados por coma (por ejemplo, un dominio de despliegue).
+    origenes-extra: ${CORS_ORIGENES_EXTRA:}
