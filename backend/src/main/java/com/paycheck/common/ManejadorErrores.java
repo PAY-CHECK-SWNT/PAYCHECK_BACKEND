@@ -23,11 +23,12 @@ import org.springframework.web.servlet.resource.NoResourceFoundException;
 public class ManejadorErrores {
 
     private static final Logger log = LoggerFactory.getLogger(ManejadorErrores.class);
-    private static final String MENSAJE_VALIDACION = "Revisa los datos del formulario.";
+    private static final String MENSAJE_VALIDACION = ApiException.MENSAJE_VALIDACION;
 
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<ErrorRespuesta> api(ApiException e) {
-        return ResponseEntity.status(e.getStatus()).body(new ErrorRespuesta(e.getCodigo(), e.getMessage()));
+        return ResponseEntity.status(e.getStatus())
+                .body(new ErrorRespuesta(e.getCodigo(), e.getMessage(), e.getCampos()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

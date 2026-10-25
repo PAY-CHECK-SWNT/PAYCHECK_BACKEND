@@ -50,6 +50,12 @@ Las alertas se devuelven en el orden de esta tabla de arriba hacia abajo: `CICLO
 - **Hoy antes del inicio del ciclo** (`H < fechaInicio`): `diasTranscurridos ≤ 0` se trata como menor que 3:
   `ritmoDiario`, `saldoProyectado` y `fechaAgotamiento` son `null` y sale `DATOS_INSUFICIENTES`.
 
+## Fecha del próximo ingreso (decidido en PC-08)
+- Válida si `hoy < F ≤ hoy + 62` (hoy no es válido; el día 62 sí).
+- `null` ("No sé") → `F = hoy + 30` y `fechaEstimada = true`, tanto al crear el ciclo como al actualizarlo con PATCH.
+  Una fecha concreta deja `fechaEstimada = false`.
+- En el PATCH, "hoy" es el día de la petición, no `fechaInicio` del ciclo.
+
 Propiedad que deben cumplir las pruebas: pagar un compromiso baja `disponible` y `comprometido`
 en el mismo monto y **no cambia `libre`**.
 

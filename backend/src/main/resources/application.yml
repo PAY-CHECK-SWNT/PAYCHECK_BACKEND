@@ -26,6 +26,9 @@ spring:
     time-zone: America/Bogota
     serialization:
       write-dates-as-timestamps: false
+    deserialization:
+      # El dinero es en pesos enteros: 1.5 responde 400 en vez de truncarse a 1.
+      accept-float-as-int: false
 
 server:
   port: ${PORT:8080}

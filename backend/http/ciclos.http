@@ -1,0 +1,54 @@
+### Ejemplos de /api/ciclos (PC-08). Arranca el backend con ./mvnw spring-boot:run.
+### Las fechas válidas dependen de hoy: posterior a hoy y máximo hoy + 62 días.
+@base = http://localhost:8080/api
+
+### Crear ciclo
+POST {{base}}/ciclos
+Content-Type: application/json
+
+{ "saldoInicial": 600000, "fechaProximoIngreso": "2026-11-03" }
+
+### Crear ciclo sin saber la fecha ("No sé" → hoy + 30, fechaEstimada: true)
+POST {{base}}/ciclos
+Content-Type: application/json
+
+{ "saldoInicial": 600000, "fechaProximoIngreso": null }
+
+### Error 400: saldo negativo
+POST {{base}}/ciclos
+Content-Type: application/json
+
+{ "saldoInicial": -1, "fechaProximoIngreso": "2026-11-03" }
+
+### Error 400: fecha que no es posterior a hoy
+POST {{base}}/ciclos
+Content-Type: application/json
+
+{ "saldoInicial": 600000, "fechaProximoIngreso": "2026-01-01" }
+
+### Error 400: fecha a más de 62 días
+POST {{base}}/ciclos
+Content-Type: application/json
+
+{ "saldoInicial": 600000, "fechaProximoIngreso": "2027-06-01" }
+
+### Error 409: repetir cuando ya hay un ciclo activo
+POST {{base}}/ciclos
+Content-Type: application/json
+
+{ "saldoInicial": 600000, "fechaProximoIngreso": "2026-11-03" }
+
+### Ciclo activo (404 si no hay)
+GET {{base}}/ciclos/activo
+
+### Cambiar la fecha del próximo ingreso
+PATCH {{base}}/ciclos/activo
+Content-Type: application/json
+
+{ "fechaProximoIngreso": "2026-11-05" }
+
+### Cambiar a "No sé" (hoy + 30, fechaEstimada: true)
+PATCH {{base}}/ciclos/activo
+Content-Type: application/json
+
+{ "fechaProximoIngreso": null }
